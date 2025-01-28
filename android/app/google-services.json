@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "720816038024",
+    "project_id": "alidiamond-78f95",
+    "storage_bucket": "alidiamond-78f95.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720816038024:android:d9f0af03f1d0830b0cbf3d",
+        "android_client_info": {
+          "package_name": "com.example.personal_pudget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyB3SPQHgamNUaoyCeuKmm3X1Ts3n_cgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

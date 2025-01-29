@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:personal_pudget/pages/auth/update_profile.dart';
 import 'package:personal_pudget/pages/auth/change_password.dart';
 import 'package:personal_pudget/pages/auth/sign_in_page.dart';
-import 'package:personal_pudget/utils/currency_converter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -18,7 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late SharedPreferences _prefs;
-  
+
   bool _notificationsEnabled = true;
   String _selectedLanguage = 'English';
   String _selectedCurrency = 'USD';
@@ -29,8 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _initializePrefs();
-    _loadUserPreferences();
+    _initializePrefs().then((_) => _loadUserPreferences());
     _loadUserData();
   }
 
@@ -43,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  Future<void> _loadUserPreferences() async {
+  void _loadUserPreferences() {
     setState(() {
       _selectedLanguage = _prefs.getString('language') ?? 'English';
       _selectedCurrency = _prefs.getString('currency') ?? 'USD';
@@ -61,8 +59,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
-        DocumentSnapshot userData = await _firestore.collection('users').doc(user.uid).get();
-        
+        DocumentSnapshot userData =
+            await _firestore.collection('users').doc(user.uid).get();
+
         if (userData.exists) {
           Map<String, dynamic> data = userData.data() as Map<String, dynamic>;
           setState(() {
@@ -79,72 +78,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _updateLanguage(String language) async {
     setState(() => _selectedLanguage = language);
     await _saveUserPreferences();
-    
+
     // Update the UI with the new language
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            language == 'English' 
-              ? 'Language changed to English' 
-              : 'Luuqada waxaa loo badalay Soomaali'
-          ),
+          content: Text(language == 'English'
+              ? 'Language changed to English'
+              : 'Luuqada waxaa loo badalay Soomaali'),
         ),
       );
-    }
-  }
-
-  void _updateCurrency(String currency) async {
-    final oldCurrency = _selectedCurrency;
-    setState(() => _selectedCurrency = currency);
-    await _saveUserPreferences();
-
-    // Update all transactions in Firestore with the new currency
-    try {
-      User? user = _auth.currentUser;
-      if (user != null) {
-        final transactions = await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('transactions')
-            .get();
-
-        final batch = _firestore.batch();
-        
-        for (var doc in transactions.docs) {
-          final amount = doc.data()['amount'] as double;
-          final newAmount = CurrencyConverter.convert(
-            amount,
-            oldCurrency,
-            currency,
-          );
-          
-          batch.update(doc.reference, {
-            'amount': newAmount,
-            'currency': currency,
-          });
-        }
-
-        await batch.commit();
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Currency updated to \${currency}'),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      print('Error updating currency: \$e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to update currency for all transactions'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     }
   }
 
@@ -153,10 +96,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(_selectedLanguage == 'English' 
-            ? 'Select Language' 
-            : 'Dooro Luuqada'
-          ),
+          title: Text(_selectedLanguage == 'English'
+              ? 'Select Language'
+              : 'Dooro Luuqada'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -176,45 +118,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () {
                   Navigator.pop(context);
                   _updateLanguage('Somali');
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showCurrencyDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(_selectedLanguage == 'English' 
-            ? 'Select Currency' 
-            : 'Dooro Lacagta'
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Text('\$', style: TextStyle(fontSize: 20)),
-                title: const Text('USD'),
-                subtitle: const Text('US Dollar'),
-                selected: _selectedCurrency == 'USD',
-                onTap: () {
-                  Navigator.pop(context);
-                  _updateCurrency('USD');
-                },
-              ),
-              ListTile(
-                leading: const Text('€', style: TextStyle(fontSize: 20)),
-                title: const Text('EUR'),
-                subtitle: const Text('Euro'),
-                selected: _selectedCurrency == 'EUR',
-                onTap: () {
-                  Navigator.pop(context);
-                  _updateCurrency('EUR');
                 },
               ),
             ],
@@ -245,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isSomali = _selectedLanguage == 'Somali';
-    
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -271,7 +174,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   Text(
                     _fullName,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     _email,
@@ -294,7 +198,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const ChangePasswordScreen()),
                 );
               },
             ),
@@ -304,7 +209,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const UpdateProfileScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const UpdateProfileScreen()),
                 );
               },
             ),
@@ -330,12 +236,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: isSomali ? 'Luuqada' : 'Language',
               value: _selectedLanguage,
               onTap: _showLanguageDialog,
-            ),
-            _buildSettingItemWithDropdown(
-              icon: Icons.attach_money,
-              title: isSomali ? 'Lacagta' : 'Currency',
-              value: _selectedCurrency,
-              onTap: _showCurrencyDialog,
             ),
             const SizedBox(height: 32),
 

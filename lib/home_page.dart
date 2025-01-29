@@ -26,6 +26,44 @@ class _HomePageState extends State<HomePage> {
   Map<String, double> _budgets = {};
   List<Map<String, dynamic>> _recentTransactions = [];
   bool _isLoading = true;
+  String _selectedCurrency = 'USD';
+  final Map<String, double> _conversionRates = {
+    'USD': 1.0,
+    'EUR': 0.92, // 1 USD = 0.92 EUR
+    'GBP': 0.79, // 1 USD = 0.79 GBP
+    'SOS': 27000.0, // 1 USD = 27000 SOS
+  };
+
+  double _convertAmount(double amount) {
+    try {
+      if (_selectedCurrency == 'SOS') {
+        // Direct conversion to SOS
+        return amount * 27000.0;
+      } else if (_selectedCurrency == 'USD') {
+        return amount;
+      } else {
+        // For other currencies (EUR, GBP)
+        final targetRate = _conversionRates[_selectedCurrency] ?? 1.0;
+        return amount * targetRate;
+      }
+    } catch (e) {
+      print('Error converting amount: $e');
+      return amount;
+    }
+  }
+
+  String _getCurrencySymbol() {
+    switch (_selectedCurrency) {
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      case 'SOS':
+        return 'Sh';
+      default:
+        return '\$';
+    }
+  }
 
   @override
   void initState() {
@@ -149,10 +187,10 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: DropdownButton<String>(
-                  value: 'USD',
+                  value: _selectedCurrency,
                   underline: Container(),
                   icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-                  items: <String>['USD', 'EUR', 'GBP']
+                  items: <String>['USD', 'EUR', 'GBP', 'SOS']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -161,7 +199,11 @@ class _HomePageState extends State<HomePage> {
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
-                    // Handle currency change
+                    if (newValue != null) {
+                      setState(() {
+                        _selectedCurrency = newValue;
+                      });
+                    }
                   },
                 ),
               ),
@@ -198,7 +240,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBalanceCard() {
     final balance = _totalIncome - _totalExpenses;
-    final formatter = NumberFormat.currency(symbol: '\$');
+    final formatter = NumberFormat.currency(
+      symbol: _getCurrencySymbol(),
+      decimalDigits: _selectedCurrency == 'SOS' ? 0 : 2,
+    );
+    final convertedBalance = _convertAmount(balance);
 
     return Container(
       decoration: BoxDecoration(
@@ -217,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     const Text('Total Balance',
                         style: TextStyle(color: Colors.grey, fontSize: 16)),
-                    Text(formatter.format(balance),
+                    Text(formatter.format(convertedBalance),
                         style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -259,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     const Text('Income',
                         style: TextStyle(color: Colors.grey, fontSize: 16)),
-                    Text(formatter.format(_totalIncome),
+                    Text(formatter.format(_convertAmount(_totalIncome)),
                         style:
                             const TextStyle(color: Colors.white, fontSize: 18)),
                   ],
@@ -269,7 +315,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     const Text('Expenses',
                         style: TextStyle(color: Colors.grey, fontSize: 16)),
-                    Text(formatter.format(_totalExpenses),
+                    Text(formatter.format(_convertAmount(_totalExpenses)),
                         style:
                             const TextStyle(color: Colors.white, fontSize: 18)),
                   ],
@@ -433,8 +479,10 @@ class _HomePageState extends State<HomePage> {
                       Text(entry.key, style: const TextStyle(fontSize: 12)),
                       const SizedBox(width: 4),
                       Text(
-                          NumberFormat.currency(symbol: '\$')
-                              .format(entry.value),
+                          NumberFormat.currency(
+                            symbol: _getCurrencySymbol(),
+                            decimalDigits: _selectedCurrency == 'SOS' ? 0 : 2,
+                          ).format(_convertAmount(entry.value)),
                           style: const TextStyle(fontSize: 12)),
                     ],
                   );
@@ -527,7 +575,10 @@ class _HomePageState extends State<HomePage> {
                 title: Text(category),
                 subtitle: Text(description),
                 trailing: Text(
-                  '${isIncome ? '+' : '-'}\$${amount.toStringAsFixed(2)}',
+                  '${isIncome ? '+' : '-'}${NumberFormat.currency(
+                    symbol: _getCurrencySymbol(),
+                    decimalDigits: _selectedCurrency == 'SOS' ? 0 : 2,
+                  ).format(_convertAmount(amount))}',
                   style: TextStyle(
                     color: isIncome ? Colors.green : Colors.red,
                     fontWeight: FontWeight.bold,
@@ -590,7 +641,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBudgetProgress(
       String label, double current, double total, Color color) {
-    final formatter = NumberFormat.currency(symbol: '\$');
+    final formatter = NumberFormat.currency(
+      symbol: _getCurrencySymbol(),
+      decimalDigits: _selectedCurrency == 'SOS' ? 0 : 2,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -598,7 +652,8 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label),
-            Text('${formatter.format(current)}/${formatter.format(total)}'),
+            Text(
+                '${formatter.format(_convertAmount(current))}/${formatter.format(_convertAmount(total))}'),
           ],
         ),
         const SizedBox(height: 4),

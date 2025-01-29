@@ -5,6 +5,8 @@ import 'package:personal_pudget/widgets/bottom_navigation_bar.dart';
 import 'package:personal_pudget/transaction_page.dart';
 import 'pages/auth/welcome_screen.dart';
 import 'package:personal_pudget/Report.dart';
+import 'package:provider/provider.dart';
+import 'package:personal_pudget/services/currency_service.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -31,21 +33,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Budget Manager',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Inter',
+    return ChangeNotifierProvider(
+      create: (_) => CurrencyService(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Budget Manager',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: 'Inter',
+        ),
+        home: const WelcomeScreen(),
+        routes: {
+          '/welcome': (context) => const WelcomeScreen(),
+          '/home': (context) => const MainScreen(initialIndex: 0),
+          '/transactions': (context) => const MainScreen(initialIndex: 1),
+          '/reports': (context) => const MainScreen(initialIndex: 2),
+          '/profile': (context) => const MainScreen(initialIndex: 3),
+        },
       ),
-      home: const WelcomeScreen(),
-      routes: {
-        '/welcome': (context) => const WelcomeScreen(),
-        '/home': (context) => const MainScreen(initialIndex: 0),
-        '/transactions': (context) => const MainScreen(initialIndex: 1),
-        '/reports': (context) => const MainScreen(initialIndex: 2),
-        '/profile': (context) => const MainScreen(initialIndex: 3),
-      },
     );
   }
 }

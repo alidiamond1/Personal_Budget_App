@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:personal_pudget/services/firebase_service.dart';
+import 'package:personal_pudget/services/currency_service.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -74,10 +76,10 @@ class _TransactionPageState extends State<TransactionPage> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: DropdownButton<String>(
-              value: 'USD',
+              value: Provider.of<CurrencyService>(context).selectedCurrency,
               underline: Container(),
               icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-              items: <String>['USD', 'EUR', 'GBP']
+              items: <String>['USD', 'EUR', 'GBP', 'SOS']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -86,7 +88,10 @@ class _TransactionPageState extends State<TransactionPage> {
                 );
               }).toList(),
               onChanged: (String? newValue) {
-                // Handle currency change
+                if (newValue != null) {
+                  Provider.of<CurrencyService>(context, listen: false)
+                      .setSelectedCurrency(newValue);
+                }
               },
             ),
           ),
@@ -167,7 +172,7 @@ class _TransactionPageState extends State<TransactionPage> {
                                   description,
                                   DateFormat('MMM dd, yyyy').format(date),
                                   category,
-                                  '${isIncome ? '+' : '-'}\$${amount.toStringAsFixed(2)}',
+                                  '${isIncome ? '+' : '-'}${Provider.of<CurrencyService>(context).getCurrencySymbol()}${Provider.of<CurrencyService>(context).convertAmount(amount).toStringAsFixed(2)}',
                                   isIncome ? Colors.green : Colors.red,
                                 );
                               },

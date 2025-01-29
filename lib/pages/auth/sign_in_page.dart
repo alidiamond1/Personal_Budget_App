@@ -20,18 +20,22 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> _handleSignIn() async {
     if (_formKey.currentState!.validate()) {
+      if (!mounted) return;
       setState(() => _isLoading = true);
       try {
         await _authService.signIn(
           email: _emailController.text,
           password: _passwordController.text,
         );
-        Navigator.pushReplacementNamed(context, '/home');
+        if (!mounted) return;
+        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
       } on FirebaseAuthException catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? 'Sign in failed')),
         );
       } finally {
+        if (!mounted) return;
         setState(() => _isLoading = false);
       }
     }

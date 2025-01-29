@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
   final int currentIndex;
@@ -17,29 +18,20 @@ class MyBottomNavigationBar extends StatefulWidget {
 class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: widget.currentIndex,
+    return CurvedNavigationBar(
+      index: widget.currentIndex,
       onTap: widget.onTap,
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.indigo,
-      unselectedItemColor: Colors.grey,
+      backgroundColor: Colors.transparent,
+      color: Theme.of(context).primaryColor,
+      buttonBackgroundColor: Theme.of(context).primaryColor,
+      height: 60,
+      animationDuration: const Duration(milliseconds: 300),
+      animationCurve: Curves.easeInOut,
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.swap_horiz),
-          label: 'Transactions',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.bar_chart),
-          label: 'Reports',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
+        Icon(Icons.home, color: Colors.white),
+        Icon(Icons.swap_horiz, color: Colors.white),
+        Icon(Icons.bar_chart, color: Colors.white),
+        Icon(Icons.person, color: Colors.white),
       ],
     );
   }

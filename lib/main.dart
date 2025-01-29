@@ -40,7 +40,11 @@ class MyApp extends StatelessWidget {
       ),
       home: const WelcomeScreen(),
       routes: {
+        '/welcome': (context) => const WelcomeScreen(),
         '/home': (context) => const MainScreen(initialIndex: 0),
+        '/transactions': (context) => const MainScreen(initialIndex: 1),
+        '/reports': (context) => const MainScreen(initialIndex: 2),
+        '/profile': (context) => const MainScreen(initialIndex: 3),
       },
     );
   }

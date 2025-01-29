@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/services.dart';
-import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:personal_pudget/pages/auth/profile.dart';
 import 'package:personal_pudget/services/firebase_service.dart';
 import 'package:personal_pudget/main.dart';
 import 'add_expense_dialog.dart';

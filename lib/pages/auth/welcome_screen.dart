@@ -1,183 +1,197 @@
 import 'package:flutter/material.dart';
 import 'sign_in_page.dart';
-import 'sign_up_page.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  final PageController _pageController = PageController();
+  bool isLastPage = false;
+
+  final List<OnboardingPage> _pages = [
+    OnboardingPage(
+      image: 'https://img.freepik.com/free-vector/savings-concept-illustration_114360-5766.jpg',
+      title: 'Track Your Expenses',
+      description: 'Easily monitor your daily spending and keep your finances in check',
+    ),
+    OnboardingPage(
+      image: 'https://img.freepik.com/free-vector/investment-data-concept-illustration_114360-5159.jpg',
+      title: 'Smart Budgeting',
+      description: 'Set budgets for different categories and achieve your financial goals',
+    ),
+    OnboardingPage(
+      image: 'https://img.freepik.com/free-vector/data-analysis-concept-illustration_114360-5240.jpg',
+      title: 'Insightful Analytics',
+      description: 'Get detailed insights about your spending habits with beautiful charts',
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.blue.shade900,
-            Colors.blue.shade800,
-            Colors.indigo.shade900,
-          ],
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.blue.shade900,
+              Colors.blue.shade800,
+              Colors.indigo.shade900,
+            ],
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              itemCount: _pages.length,
+              onPageChanged: (index) {
+                setState(() {
+                  isLastPage = index == _pages.length - 1;
+                });
+              },
+              itemBuilder: (context, index) {
+                return _buildPage(_pages[index]);
+              },
+            ),
+            Container(
+              alignment: const Alignment(0, 0.85),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: size.height * 0.08),
-                  // Logo
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white24, width: 2),
-                    ),
-                    child: const Icon(
-                      Icons.account_balance_wallet,
-                      size: 80,
-                      color: Colors.white,
+                  SmoothPageIndicator(
+                    controller: _pageController,
+                    count: _pages.length,
+                    effect: WormEffect(
+                      spacing: 16,
+                      dotColor: Colors.white.withOpacity(0.3),
+                      activeDotColor: Colors.white,
+                      dotHeight: 10,
+                      dotWidth: 10,
                     ),
                   ),
-                  SizedBox(height: size.height * 0.03),
-
-                  // App Name
-                  const Text(
-                    'Budget Manager',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.02),
-
-                  // Description
-                  Text(
-                    'Take control of your finances with our easy-to-use budget management app',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white.withOpacity(0.8),
-                      height: 1.5,
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.04),
-
-                  // Features List
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildFeatureItem(
-                            Icons.track_changes, 'Track your expenses'),
-                        SizedBox(height: size.height * 0.02),
-                        _buildFeatureItem(Icons.savings, 'Set savings goals'),
-                        SizedBox(height: size.height * 0.02),
-                        _buildFeatureItem(Icons.insights, 'View insights'),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.06),
-
-                  // Sign In Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignInPage(),
+                  const SizedBox(height: 32),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.blue.shade900,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
+                          elevation: 3,
+                        ),
+                        onPressed: () {
+                          if (isLastPage) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignInPage()),
+                            );
+                          } else {
+                            _pageController.nextPage(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                            );
+                          }
+                        },
+                        child: Text(
+                          isLastPage ? 'Get Started' : 'Next',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (!isLastPage) ...[
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SignInPage()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade400,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 2,
-                      ),
-                      child: const Text(
-                        'Sign In',
+                      child: Text(
+                        'Skip',
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: size.height * 0.02),
-
-                  // Sign Up Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUpPage(),
-                          ),
-                        );
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white, width: 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Create Account',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.04),
+                  ],
                 ],
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildFeatureItem(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: Colors.white70,
-          size: 24,
-        ),
-        const SizedBox(width: 16),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
+  Widget _buildPage(OnboardingPage page) {
+    return Padding(
+      padding: const EdgeInsets.all(40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.network(
+            page.image,
+            height: 280,
+            fit: BoxFit.contain,
           ),
-        ),
-      ],
+          const SizedBox(height: 64),
+          Text(
+            page.title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            page.description,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 16,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
+}
+
+class OnboardingPage {
+  final String image;
+  final String title;
+  final String description;
+
+  OnboardingPage({
+    required this.image,
+    required this.title,
+    required this.description,
+  });
 }

@@ -50,6 +50,7 @@ dependencies:
   path_provider: ^2.1.2
   mime: ^1.0.1
   path: ^1.8.2
+  smooth_page_indicator: ^1.1.0
   
   
   

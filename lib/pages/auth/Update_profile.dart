@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 
+// Screen for updating user profile information including profile picture
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({super.key});
 
@@ -34,6 +35,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _loadUserData();
   }
 
+  // Load user data from Firebase including profile image, name, and phone
   Future<void> _loadUserData() async {
     setState(() => _isLoading = true);
     try {
@@ -59,6 +61,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     }
   }
 
+  // Select and upload profile picture from device gallery
   Future<void> _pickImageFromGallery() async {
     try {
       setState(() {
@@ -82,6 +85,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     }
   }
 
+  // Take and upload profile picture using device camera
   Future<void> _pickImageFromCamera() async {
     try {
       setState(() {
@@ -105,6 +109,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     }
   }
 
+  // Upload profile image to Firebase Storage and update user profile
   Future<void> _uploadImage() async {
     if (_imageFile == null) return;
 
@@ -137,7 +142,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('Profile picture updated successfully')),
+                // English: Success message for profile picture update
+                content: Text(
+                    'Sawirka profile-ka waa la update-gareeyay')), // Profile picture updated successfully
           );
         }
       }
@@ -280,8 +287,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
+                      // Validate that name field is not empty
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
+                        return 'Fadlan geli magacaaga'; //Please enter your name
                       }
                       return null;
                     },
@@ -328,14 +336,16 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
+                                            // Success message for profile update
                                             content: Text(
-                                                'Profile updated successfully')),
+                                                'Profile-ka waa la update-gareeyay')), // Profile updated successfully
                                       );
                                     }
                                   }
                                 } catch (e) {
+                                  // Error message when profile update fails
                                   setState(() => _errorMessage =
-                                      'Error updating profile: $e');
+                                      'Khalad ayaa dhacay markii la update-gareynaayay profile-ka: $e'); // Error occurred while updating profile
                                 } finally {
                                   if (mounted) {
                                     setState(() => _isLoading = false);
@@ -347,8 +357,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         backgroundColor: Colors.blue.shade900,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child:
-                          Text(_isLoading ? 'Updating...' : 'Update Profile'),
+                      //Button text showing current state
+                      child: Text(_isLoading
+                          ? 'La update-gareynaayaa...'
+                          : 'Update Profile-ka'), //Updating... : Update Profile
                     ),
                   ),
                 ],

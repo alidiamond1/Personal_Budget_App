@@ -5,6 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math' as math;
 
+/// A comprehensive reporting page that displays financial analytics and insights.
+/// This page provides:
+/// - Spending trends visualization with line charts
+/// - Category-wise expense breakdown with pie charts
+/// - Savings progress tracking
+/// - Period-based filtering of data
 class ReportsPage extends StatefulWidget {
   const ReportsPage({super.key});
 
@@ -13,12 +19,17 @@ class ReportsPage extends StatefulWidget {
 }
 
 class _ReportsPageState extends State<ReportsPage> {
+  // Firebase instances for data access
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
-  bool _isLoading = false;
-  List<Map<String, dynamic>> _transactions = [];
-  Map<String, double> _categoryExpenses = {};
-  double _totalSpending = 0;
+
+  // State variables for managing data and UI
+  bool _isLoading = false; // Controls loading indicator
+  List<Map<String, dynamic>> _transactions = []; // Stores all transactions
+  Map<String, double> _categoryExpenses = {}; // Category-wise expense totals
+  double _totalSpending = 0; // Total expenses for selected period
+
+  // Period selection for filtering data
   String _selectedPeriod = 'This Month';
   final List<String> _periods = ['Last 7 days', 'This Month', 'Last 30 days'];
 
@@ -28,6 +39,9 @@ class _ReportsPageState extends State<ReportsPage> {
     _loadReportData();
   }
 
+  /// Loads transaction data from Firebase based on selected period
+  /// Calculates category-wise expenses and total spending
+  /// Updates the UI with loading states and error handling
   Future<void> _loadReportData() async {
     if (!mounted) return;
     setState(() {
@@ -72,6 +86,9 @@ class _ReportsPageState extends State<ReportsPage> {
     return DateTime(now.year, now.month, 1);
   }
 
+  /// Calculates spending metrics from loaded transactions
+  /// - Updates category-wise expense totals
+  /// - Calculates total spending for the period
   void _calculateMetrics() {
     _categoryExpenses.clear();
     _totalSpending = 0;
@@ -87,6 +104,13 @@ class _ReportsPageState extends State<ReportsPage> {
     }
   }
 
+  /// Builds the spending analytics section with a line chart
+  /// Shows daily spending trends over time
+  /// Includes:
+  /// - Line chart with daily spending
+  /// - Top spending category
+  /// - Monthly total
+  /// - Daily average
   Widget _buildSpendingAnalytics() {
     List<FlSpot> spots = [];
     final now = DateTime.now();
@@ -269,6 +293,13 @@ class _ReportsPageState extends State<ReportsPage> {
     );
   }
 
+  /// Builds the category breakdown section with a pie chart
+  /// Shows proportion of spending across different categories
+  /// Features:
+  /// - Interactive pie chart
+  /// - Percentage breakdown
+  /// - Category labels and color coding
+  /// - Fallback UI for no data
   Widget _buildCategoryBreakdown() {
     if (_categoryExpenses.isEmpty) {
       return Column(
@@ -394,6 +425,12 @@ class _ReportsPageState extends State<ReportsPage> {
     );
   }
 
+  /// Builds the savings overview section
+  /// Displays:
+  /// - Monthly savings goal
+  /// - Current savings (Income - Expenses)
+  /// - Progress bar towards goal
+  /// - Percentage completion
   Widget _buildSavingsOverview() {
     double totalIncome = 0;
     for (var transaction in _transactions) {

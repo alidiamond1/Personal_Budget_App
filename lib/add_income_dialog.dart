@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_pudget/services/firebase_service.dart';
 
-/// A dialog that allows users to add a new income.
+/// A dialog widget that allows users to add and manage their income entries.
+/// This dialog provides functionality to:
+/// - Enter income amount
+/// - Select income source (Salary, Freelance, Investment, Other)
+/// - Set the date of income
+/// - Add optional description
+/// - Configure recurring income with frequency options
 class AddIncomeDialog extends StatefulWidget {
   const AddIncomeDialog({super.key});
 
@@ -11,17 +17,22 @@ class AddIncomeDialog extends StatefulWidget {
 }
 
 class _AddIncomeDialogState extends State<AddIncomeDialog> {
+  // Controllers and state variables for managing income data
   final TextEditingController _amountController = TextEditingController();
-  String? _source;
-  DateTime _selectedDate = DateTime.now();
-  String? _description;
-  bool _isRecurring = false;
-  String? _frequency;
-  bool _isLoading = false;
+  String? _source; // Selected income source
+  DateTime _selectedDate = DateTime.now(); // Date of income
+  String? _description; // Optional description
+  bool _isRecurring = false; // Whether income repeats
+  String? _frequency; // Frequency of recurring income
+  bool _isLoading = false; // Loading state for async operations
   final FirebaseService _firebaseService = FirebaseService();
 
+  // Predefined list of income sources
   final List<String> _sources = ['Salary', 'Freelance', 'Investment', 'Other'];
 
+  /// Saves the income entry to Firebase
+  /// Validates required fields and handles the save operation
+  /// Shows success or error messages using SnackBar
   Future<void> _saveIncome() async {
     if (_amountController.text.isEmpty || _source == null) {
       ScaffoldMessenger.of(context).showSnackBar(

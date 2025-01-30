@@ -10,6 +10,8 @@ import 'add_expense_dialog.dart';
 import 'add_income_dialog.dart';
 import 'add_budget_dialog.dart';
 
+/// The HomePage widget represents the main dashboard of the application.
+/// It displays financial overview, recent transactions, and budget status.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -17,23 +19,29 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+/// The state class for HomePage that manages all the data and UI logic
 class _HomePageState extends State<HomePage> {
-  int touchedIndex = -1;
+  int touchedIndex = -1; // Index of the currently touched chart section
   final FirebaseService _firebaseService = FirebaseService();
-  double _totalIncome = 0;
-  double _totalExpenses = 0;
-  Map<String, double> _expensesByCategory = {};
-  Map<String, double> _budgets = {};
-  List<Map<String, dynamic>> _recentTransactions = [];
-  bool _isLoading = true;
-  String _selectedCurrency = 'USD';
+  double _totalIncome = 0; // Total income for the current period
+  double _totalExpenses = 0; // Total expenses for the current period
+  Map<String, double> _expensesByCategory = {}; // Expenses grouped by category
+  Map<String, double> _budgets = {}; // Budget limits for each category
+  List<Map<String, dynamic>> _recentTransactions =
+      []; // List of recent transactions
+  bool _isLoading = true; // Loading state indicator
+  String _selectedCurrency = 'USD'; // Currently selected currency
+
+  // Currency conversion rates relative to USD
   final Map<String, double> _conversionRates = {
     'USD': 1.0,
     'EUR': 0.92, // 1 USD = 0.92 EUR
     'GBP': 0.79, // 1 USD = 0.79 GBP
-    'SOS': 27000.0, // 1 USD = 27000 SOS
+    'SOS': 26000.0, // 1 USD = 27000 SOS
   };
 
+  /// Converts an amount from USD to the selected currency
+  /// Uses predefined conversion rates
   double _convertAmount(double amount) {
     try {
       if (_selectedCurrency == 'SOS') {
@@ -52,6 +60,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Returns the appropriate currency symbol based on the selected currency
   String _getCurrencySymbol() {
     switch (_selectedCurrency) {
       case 'EUR':
@@ -65,12 +74,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Initializes the widget and loads initial data
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadData(); // Soo jiidashada xogta
   }
 
+  /// Loads all essential data from Firebase
+  /// Including income, expenses, budgets, and recent transactions
+  /// Updates the UI accordingly and handles any errors
   Future<void> _loadData() async {
     print('Starting to load data...');
     setState(() => _isLoading = true);
@@ -137,6 +150,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Builds the main UI of the home page
+  /// Includes authentication check, currency selector, and main content sections
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -238,6 +253,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Builds the balance card widget showing total balance
+  /// Displays income vs expenses in a mini pie chart
+  /// Shows formatted amounts in selected currency
   Widget _buildBalanceCard() {
     final balance = _totalIncome - _totalExpenses;
     final formatter = NumberFormat.currency(
@@ -328,7 +346,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Function to show the Add Expense dialog
+  /// Shows a dialog for adding a new expense
+  /// Creates and displays the AddExpenseDialog widget
   void _showAddExpenseDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -338,7 +357,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Function to show the Add Income dialog
+  /// Shows a dialog for adding new income
+  /// Creates and displays the AddIncomeDialog widget
   void _showAddIncomeDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -348,7 +368,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Function to show the Add Budget dialog
+  /// Shows a dialog for setting a new budget
+  /// Creates and displays the AddBudgetDialog widget
   void _showAddBudgetDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -358,6 +379,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Builds the action buttons section
+  /// Contains buttons for adding expenses, income, and setting budgets
   Widget _buildActionButtons(BuildContext context) {
     return SizedBox(
       height: 48,
@@ -414,6 +437,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Builds the spending overview section
+  /// Shows a pie chart of expenses by category
+  /// Includes a legend with category names and amounts
   Widget _buildSpendingOverview() {
     if (_expensesByCategory.isEmpty) {
       return const Card(
@@ -495,6 +521,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Returns a color for each expense category
+  /// Maintains consistent colors for better visualization
   Color _getCategoryColor(String category) {
     switch (category.toLowerCase()) {
       case 'food & dining':
@@ -510,6 +538,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// Builds the recent transactions section
+  /// Shows a list of recent income and expenses
+  /// Includes transaction details and amounts
   Widget _buildRecentTransactions() {
     if (_recentTransactions.isEmpty) {
       return const Card(
@@ -592,6 +623,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Builds the budget status section
+  /// Shows progress bars for each budget category
+  /// Compares current spending against budget limits
   Widget _buildBudgetStatus() {
     if (_budgets.isEmpty) {
       return const Card(
@@ -639,6 +673,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Builds a progress indicator for a budget category
+  /// Shows current spending vs total budget
+  /// Includes formatted amounts in selected currency
   Widget _buildBudgetProgress(
       String label, double current, double total, Color color) {
     final formatter = NumberFormat.currency(
@@ -666,6 +703,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Handles navigation to different pages of the app
+  /// Uses named routes for navigation
   void _navigateToPage(BuildContext context, int index) {
     switch (index) {
       case 0:

@@ -28,7 +28,8 @@ class _SignInPageState extends State<SignInPage> {
           password: _passwordController.text,
         );
         if (!mounted) return;
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (route) => false);
       } on FirebaseAuthException catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -150,6 +151,18 @@ class _SignInPageState extends State<SignInPage> {
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 16),
                               ),
+                              validator: (value) {
+                                // English: Please enter your email
+                                if (value == null || value.isEmpty) {
+                                  return 'Fadlan geli email-kaaga';
+                                }
+                                // English: Please enter a valid email (example: name@gmail.com)
+                                if (!value.contains('@') ||
+                                    !value.contains('.')) {
+                                  return 'Fadlan geli email sax ah (tusaale: magac@gmail.com)';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -176,6 +189,17 @@ class _SignInPageState extends State<SignInPage> {
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 16),
                               ),
+                              validator: (value) {
+                                // English: Please enter your password
+                                if (value == null || value.isEmpty) {
+                                  return 'Fadlan geli password-ka';
+                                }
+                                // English: Password must be more than 6 characters
+                                if (value.length < 6) {
+                                  return 'Password-ku waa inuu ka badan yahay 6 xaraf';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           const SizedBox(height: 12),

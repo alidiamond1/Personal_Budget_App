@@ -13,21 +13,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final PageController _pageController = PageController();
   bool isLastPage = false;
 
+  //  Define the onboarding pages with their content
   final List<OnboardingPage> _pages = [
+    //  First page - Expense Tracking Feature
     OnboardingPage(
-      image: 'https://img.freepik.com/free-vector/savings-concept-illustration_114360-5766.jpg',
+      image:
+          'https://img.freepik.com/free-vector/savings-concept-illustration_114360-5766.jpg',
       title: 'Track Your Expenses',
-      description: 'Easily monitor your daily spending and keep your finances in check',
+      description:
+          'Easily monitor your daily spending and keep your finances in check',
     ),
+    //  Second page - Budget Management Feature
     OnboardingPage(
-      image: 'https://img.freepik.com/free-vector/investment-data-concept-illustration_114360-5159.jpg',
+      image:
+          'https://img.freepik.com/free-vector/investment-data-concept-illustration_114360-5159.jpg',
       title: 'Smart Budgeting',
-      description: 'Set budgets for different categories and achieve your financial goals',
+      description:
+          'Set budgets for different categories and achieve your financial goals',
     ),
+    //  Third page - Analytics Feature
     OnboardingPage(
-      image: 'https://img.freepik.com/free-vector/data-analysis-concept-illustration_114360-5240.jpg',
+      image:
+          'https://img.freepik.com/free-vector/data-analysis-concept-illustration_114360-5240.jpg',
       title: 'Insightful Analytics',
-      description: 'Get detailed insights about your spending habits with beautiful charts',
+      description:
+          'Get detailed insights about your spending habits with beautiful charts',
     ),
   ];
 
@@ -97,13 +107,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                           elevation: 3,
                         ),
+                        //  Handle navigation - either go to sign in page or show next onboarding page
                         onPressed: () {
                           if (isLastPage) {
+                            //  On last page, navigate to sign in screen
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => const SignInPage()),
+                              MaterialPageRoute(
+                                  builder: (context) => const SignInPage()),
                             );
                           } else {
+                            //  Show next onboarding page with animation
                             _pageController.nextPage(
                               duration: const Duration(milliseconds: 500),
                               curve: Curves.easeInOut,
@@ -123,10 +137,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   if (!isLastPage) ...[
                     const SizedBox(height: 16),
                     TextButton(
+                      // Skip button to directly navigate to sign in page
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const SignInPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const SignInPage()),
                         );
                       },
                       child: Text(
@@ -147,6 +163,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  // Builds individual onboarding page with image, title and description
   Widget _buildPage(OnboardingPage page) {
     return Padding(
       padding: const EdgeInsets.all(40),
@@ -184,10 +201,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
+// Class representing each onboarding page with its content
 class OnboardingPage {
-  final String image;
-  final String title;
-  final String description;
+  final String image; // The URL of the illustration image
+  final String title; // The main title of the page
+  final String description; // Detailed description of the feature
 
   OnboardingPage({
     required this.image,

@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_pudget/services/firebase_service.dart';
 
-/// A dialog that allows users to add a new expense.
+/// A dialog widget that allows users to add and manage their expenses.
+/// This dialog provides comprehensive functionality to:
+/// - Enter expense amount
+/// - Select from predefined categories or create custom ones
+/// - Set the date of the expense
+/// - Add optional notes
+/// - Configure recurring expenses with multiple frequency options
+/// - Customize categories with colors and icons
 class AddExpenseDialog extends StatefulWidget {
   const AddExpenseDialog({super.key});
 
@@ -11,15 +18,17 @@ class AddExpenseDialog extends StatefulWidget {
 }
 
 class _AddExpenseDialogState extends State<AddExpenseDialog> {
+  // Controllers and state variables for managing expense data
   final TextEditingController _amountController = TextEditingController();
-  String? _category;
-  DateTime _selectedDate = DateTime.now();
-  String? _notes;
-  bool _isRecurring = false;
-  String? _frequency;
-  bool _isLoading = false;
+  String? _category; // Selected expense category
+  DateTime _selectedDate = DateTime.now(); // Date of expense
+  String? _notes; // Optional notes for the expense
+  bool _isRecurring = false; // Whether expense repeats
+  String? _frequency; // Frequency of recurring expense
+  bool _isLoading = false; // Loading state for async operations
   final FirebaseService _firebaseService = FirebaseService();
 
+  // Predefined list of expense categories
   final List<String> _categories = [
     'Groceries',
     'Transportation',
@@ -29,6 +38,7 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
     'Other'
   ]; // Added 'Other' as a default category
 
+  // Icons corresponding to each category
   final List<IconData> _categoryIcons = [
     Icons.shopping_basket,
     Icons.directions_car,
@@ -38,6 +48,10 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
     Icons.category,
   ];
 
+  /// Saves the expense entry to Firebase
+  /// Validates required fields (amount and category)
+  /// Shows appropriate success or error messages
+  /// Handles the loading state during the save operation
   Future<void> _saveExpense() async {
     if (_amountController.text.isEmpty || _category == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -249,7 +263,12 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
     );
   }
 
-  /// Shows a dialog to add a custom category.
+  /// Shows a dialog that allows users to create a custom expense category
+  /// Users can:
+  /// - Set a custom category name
+  /// - Choose a color from predefined options
+  /// - Select an icon from available options
+  /// The new category is then added to the existing categories list
   void _showAddCustomCategoryDialog(BuildContext context) {
     String? customCategoryName;
     Color? selectedColor = Colors.blue; // Default color

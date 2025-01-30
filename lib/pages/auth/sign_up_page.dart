@@ -150,9 +150,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                     horizontal: 20, vertical: 16),
                               ),
                               validator: (value) {
+                                // English: Please enter your full name
                                 if (value == null || value.isEmpty) {
                                   return 'Fadlan geli magacaaga oo dhamaystiran';
                                 }
+                                // English: Name must be more than 3 characters
                                 if (value.length < 3) {
                                   return 'Magacu waa inuu ka badan yahay 3 xaraf';
                                 }
@@ -182,10 +184,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                     horizontal: 20, vertical: 16),
                               ),
                               validator: (value) {
+                                // English: Please enter your email
                                 if (value == null || value.isEmpty) {
                                   return 'Fadlan geli email-kaaga';
                                 }
-                                if (!value.contains('@') || !value.contains('.')) {
+                                // English: Please enter a valid email (example: name@gmail.com)
+                                if (!value.contains('@') ||
+                                    !value.contains('.')) {
                                   return 'Fadlan geli email sax ah (tusaale: magac@gmail.com)';
                                 }
                                 return null;
@@ -217,12 +222,15 @@ class _SignUpPageState extends State<SignUpPage> {
                                     horizontal: 20, vertical: 16),
                               ),
                               validator: (value) {
+                                // English: Please enter your password
                                 if (value == null || value.isEmpty) {
                                   return 'Fadlan geli password-ka';
                                 }
+                                // English: Password must be more than 6 characters
                                 if (value.length < 6) {
                                   return 'Password-ku waa inuu ka badan yahay 6 xaraf';
                                 }
+                                // English: Password must contain at least one number
                                 if (!value.contains(RegExp(r'[0-9]'))) {
                                   return 'Password-ku waa inuu lahaadaa ugu yaraan hal nambar';
                                 }
@@ -255,9 +263,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                     horizontal: 20, vertical: 16),
                               ),
                               validator: (value) {
+                                // English: Please confirm your password
                                 if (value == null || value.isEmpty) {
                                   return 'Fadlan ku celi password-ka';
                                 }
+                                // English: Both passwords must match
                                 if (value != _passwordController.text) {
                                   return 'Labada password waa inay isku mid noqdaan';
                                 }

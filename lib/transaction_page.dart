@@ -1,3 +1,11 @@
+/// This page displays all financial transactions made by the user
+/// Features:
+/// - View all income and expenses
+/// - Filter transactions by category
+/// - Currency conversion support
+/// - Pull to refresh functionality
+library;
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:personal_pudget/services/firebase_service.dart';
@@ -5,6 +13,7 @@ import 'package:personal_pudget/services/currency_service.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
+/// The main transaction page widget that displays all financial activities
 class TransactionPage extends StatefulWidget {
   const TransactionPage({super.key});
 
@@ -12,19 +21,23 @@ class TransactionPage extends StatefulWidget {
   State<TransactionPage> createState() => _TransactionPageState();
 }
 
+/// The state class for TransactionPage that manages transaction data and UI
 class _TransactionPageState extends State<TransactionPage> {
   final FirebaseService _firebaseService = FirebaseService();
-  List<Map<String, dynamic>> _transactions = [];
-  List<String> _categories = [];
-  String? _selectedCategory;
-  bool _isLoading = true;
+  List<Map<String, dynamic>> _transactions = []; // All transactions
+  List<String> _categories = []; // Available transaction categories
+  String? _selectedCategory; // Currently selected category filter
+  bool _isLoading = true; // Loading state indicator
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadData(); // Soo jiidashada xogta marka ugu horeysa
   }
 
+  /// Loads transaction data and categories from Firebase
+  /// Updates the UI with the fetched data
+  /// Handles any errors during data loading
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
     try {
@@ -57,6 +70,11 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
+  /// Builds the main UI for the transactions page
+  /// Includes:
+  /// - Currency selector in app bar
+  /// - Category filter dropdown
+  /// - Scrollable list of transactions
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,6 +203,8 @@ class _TransactionPageState extends State<TransactionPage> {
     );
   }
 
+  /// Returns the appropriate icon for each transaction category
+  /// Maps category names to their corresponding Material icons
   IconData _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {
       case 'groceries':
@@ -204,6 +224,8 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
+  /// Returns a specific color for each transaction category
+  /// Maintains consistent color coding throughout the app
   Color _getCategoryColor(String category) {
     switch (category.toLowerCase()) {
       case 'groceries':
@@ -223,6 +245,11 @@ class _TransactionPageState extends State<TransactionPage> {
     }
   }
 
+  /// Builds an individual transaction list item
+  /// Displays transaction details including:
+  /// - Category icon and color
+  /// - Transaction description and date
+  /// - Amount with appropriate color (green for income, red for expenses)
   Widget _buildTransactionItem(
     IconData icon,
     Color iconBgColor,

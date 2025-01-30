@@ -1,3 +1,12 @@
+/// Profile screen that manages user settings and preferences
+/// Features:
+/// - User profile display and management
+/// - Language selection (English/Somali)
+/// - Notification preferences
+/// - Security settings (password change, profile update)
+/// - Sign out functionality
+library;
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,17 +22,21 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
+/// State class for ProfileScreen that handles user preferences and data
 class _ProfileScreenState extends State<ProfileScreen> {
+  // Firebase instances for authentication and data storage
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late SharedPreferences _prefs;
+  late SharedPreferences _prefs; // For storing user preferences locally
 
-  bool _notificationsEnabled = true;
-  String _selectedLanguage = 'English';
-  String _selectedCurrency = 'USD';
+  // User preferences
+  bool _notificationsEnabled = true; // Notification toggle state
+  String _selectedLanguage = 'English'; // Current language selection
+  String _selectedCurrency = 'USD'; // Current currency selection
 
-  String _fullName = '';
-  String _email = '';
+  // User profile data
+  String _fullName = ''; // User's full name
+  String _email = ''; // User's email address
 
   @override
   void initState() {
@@ -32,6 +45,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadUserData();
   }
 
+  /// Initializes SharedPreferences and loads saved user preferences
+  /// Called when the screen is first created
   Future<void> _initializePrefs() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -41,6 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  /// Loads user preferences from SharedPreferences
+  /// Updates the UI with saved settings
   void _loadUserPreferences() {
     setState(() {
       _selectedLanguage = _prefs.getString('language') ?? 'English';
@@ -49,12 +66,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  /// Saves current user preferences to SharedPreferences
+  /// Called whenever a preference is changed
   Future<void> _saveUserPreferences() async {
     await _prefs.setString('language', _selectedLanguage);
     await _prefs.setString('currency', _selectedCurrency);
     await _prefs.setBool('notifications', _notificationsEnabled);
   }
 
+  /// Loads user profile data from Firebase
+  /// Retrieves user's name and email from Firestore
   Future<void> _loadUserData() async {
     try {
       User? user = _auth.currentUser;
@@ -75,6 +96,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Updates the app's language setting
+  /// Shows a confirmation message in the selected language
   void _updateLanguage(String language) async {
     setState(() => _selectedLanguage = language);
     await _saveUserPreferences();
@@ -91,6 +114,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Shows a dialog for language selection
+  /// Allows users to choose between English and Somali
   void _showLanguageDialog() {
     showDialog(
       context: context,
@@ -127,6 +152,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Handles user sign out
+  /// Clears authentication state and navigates to sign in page
   Future<void> _signOut() async {
     try {
       await _auth.signOut();
@@ -272,6 +299,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Builds a standard settings item with an icon and chevron
+  /// Used for navigation to other settings screens
   Widget _buildSettingItem({
     required IconData icon,
     required String title,
@@ -285,6 +314,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Builds a settings item with a toggle switch
+  /// Used for boolean preferences like notifications
   Widget _buildSettingItemWithSwitch({
     required IconData icon,
     required String title,
@@ -301,6 +332,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Builds a settings item with a dropdown-style display
+  /// Used for selection preferences like language
   Widget _buildSettingItemWithDropdown({
     required IconData icon,
     required String title,

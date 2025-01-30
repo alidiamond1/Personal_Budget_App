@@ -3,6 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:personal_pudget/services/firebase_service.dart';
 
+/// A dialog widget that allows users to set and manage their budget.
+/// This dialog provides functionality to:
+/// - Set a budget amount for different categories
+/// - Select from predefined spending categories
+/// - Choose the month for the budget
 class AddBudgetDialog extends StatefulWidget {
   const AddBudgetDialog({super.key});
 
@@ -11,12 +16,14 @@ class AddBudgetDialog extends StatefulWidget {
 }
 
 class _AddBudgetDialogState extends State<AddBudgetDialog> {
+  // Controllers and state variables
   final TextEditingController _amountController = TextEditingController();
   String selectedCategory = 'Shopping';
   DateTime selectedDate = DateTime.now();
   final FirebaseService _firebaseService = FirebaseService();
   bool _isLoading = false;
 
+  // Predefined list of budget categories with their icons and colors
   final List<Map<String, dynamic>> categories = [
     {'name': 'Shopping', 'icon': Icons.shopping_bag, 'color': Colors.blue},
     {'name': 'Food & Dining', 'icon': Icons.restaurant, 'color': Colors.orange},
@@ -36,12 +43,16 @@ class _AddBudgetDialogState extends State<AddBudgetDialog> {
     {'name': 'Others', 'icon': Icons.more_horiz, 'color': Colors.grey},
   ];
 
+  // Clean up the text controller when the widget is disposed
   @override
   void dispose() {
     _amountController.dispose();
     super.dispose();
   }
 
+  /// Saves the budget to Firebase
+  /// Validates the input and shows appropriate error messages
+  /// Updates the UI state during the save operation
   Future<void> _saveBudget() async {
     if (_amountController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -77,6 +88,7 @@ class _AddBudgetDialogState extends State<AddBudgetDialog> {
     }
   }
 
+  // Builds the UI for the budget dialog
   @override
   Widget build(BuildContext context) {
     return Dialog(

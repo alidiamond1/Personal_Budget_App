@@ -42,19 +42,6 @@ A comprehensive Flutter application designed for efficient personal finance mana
 
 </div>
 
-## 📋 Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [System Requirements](#system-requirements)
-- [Technology Stack](#technology-stack)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Architecture](#architecture)
-- [Testing](#testing)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [Support](#support)
-- [License](#license)
 
 ## 🎯 Overview
 

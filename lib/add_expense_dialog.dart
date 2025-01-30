@@ -63,6 +63,21 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
     setState(() => _isLoading = true);
 
     try {
+      // Check if user has any income this month
+      final currentIncome = await _firebaseService.getCurrentMonthIncome();
+      if (currentIncome <= 0) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please add income first before adding expenses'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() => _isLoading = false);
+          return;
+        }
+      }
+
       await _firebaseService.addExpense(
         amount: double.parse(_amountController.text),
         category: _category!,

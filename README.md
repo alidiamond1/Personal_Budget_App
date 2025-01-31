@@ -45,6 +45,7 @@ A comprehensive Flutter application designed for efficient personal finance mana
 ## 🎯 Overview
 
 Personal Budget App is a modern, cross-platform financial management solution built with Flutter. It provides users with powerful tools to track income, manage expenses, and analyze spending patterns, helping them make informed financial decisions.
+that acts  as very  well, and  interact different  people.
 
 ## ✨ Features
 

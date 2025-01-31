@@ -1,7 +1,6 @@
 # Personal Budget App
 
 [![Flutter Version](https://img.shields.io/badge/Flutter-3.0+-blue.svg)](https://flutter.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A comprehensive Flutter application designed for efficient personal finance management, enabling users to take control of their financial health through intuitive budget tracking and analysis.
 
@@ -224,9 +223,6 @@ We welcome contributions! Please follow these steps:
 - **Issues:** Please report bugs via [GitHub Issues](https://github.com/alidiamond1/Personal_Budget_App/issues)
 - **Questions:** Open a [Discussion](https://github.com/alidiamond1/Personal_Budget_App/discussions)
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
